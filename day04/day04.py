@@ -62,10 +62,10 @@ print(len(fully_contained_pairs))
 partially_overlapped_pairs = []
 for (a,b), (c,d) in section_pairs:
     if c <= a and a <= d or c <= b and b <= d:
-        # then (a,b) is fully contained within (c,d)
+        # then (a,b) is partially contained within (c,d)
         partially_overlapped_pairs.append((a,b))
     elif a <= c and c <= b or a <= d and d <= b:
-        # then (c,d) is fully contained within (a,b)
+        # then (c,d) is partially contained within (a,b)
         partially_overlapped_pairs.append((c,d))
 
 
