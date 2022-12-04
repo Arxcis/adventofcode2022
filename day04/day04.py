@@ -57,7 +57,7 @@ print(len(fully_contained_pairs))
 
 
 #
-# ------- PART 1 -------
+# ------- PART 2 -------
 #
 partially_overlapped_pairs = []
 for (a,b), (c,d) in section_pairs:
