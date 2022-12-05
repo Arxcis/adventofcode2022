@@ -53,23 +53,16 @@ for Move, From, To in procedure:
         stacks[To - 1].append(crate) 
     
 
+print("".join([stack[-1].replace("[","").replace("]","") for stack in stacks]))
+
 #
 # --------- PART 2 --------------
 #
 stacks = make_stacks()
 
 for Move, From, To in procedure:
-    
-    crates = []
-    for _ in range(Move):
-        crate = stacks[From - 1].pop()
-        crates.append(crate)
-    
+    crates = [stacks[From - 1].pop() for _ in range(Move)]
     stacks[To - 1].extend(crates[-1::-1])
-
-
-
-
 
 print("".join([stack[-1].replace("[","").replace("]","") for stack in stacks]))
 
