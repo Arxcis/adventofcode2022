@@ -20,8 +20,7 @@ for i in range(len(input) - PACKET_HEADER_LEN):
 #
 MESSAGE_HEADER_LEN = 14
 for i in range(len(input) - MESSAGE_HEADER_LEN):
-    from collections import OrderedDict
-    seen = OrderedDict()
+    seen = {}
     for char in input[i:i+MESSAGE_HEADER_LEN]:
         if char in seen:
             seen[char] += 1
@@ -35,8 +34,6 @@ for i in range(len(input) - MESSAGE_HEADER_LEN):
             break
     if found:
         # Found the start of message
-        message_header = "".join([char for char in seen])
-        print(message_header)
         print(i+MESSAGE_HEADER_LEN)
         break
 
