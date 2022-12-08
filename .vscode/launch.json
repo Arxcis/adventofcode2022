@@ -1,0 +1,16 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "Day 08",
+            "type": "python",
+            "request": "launch",
+            "program": "${file}",
+            "console": "integratedTerminal",
+            "args": [
+                "<",
+                "day08/liten.input"
+            ]
+        },
+    ]
+}
