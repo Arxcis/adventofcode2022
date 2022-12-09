@@ -117,15 +117,14 @@ knots = [(0,0) for i in range(10)]
 
 for (direction, steps) in moves:
     for step in range(steps):
-        head = knots[0]
-        knots[0] = move_head(head, direction)
+        knots[0] = move_head(knots[0], direction)
 
         for i, tail in enumerate(knots[1:]):
-            head = knots[i]
-            tail = move_tail(head, tail)
-            
-            knots[i+1] = tail
-            visited[tail] = True
+            knots[i+1] = move_tail(knots[i], tail)
+        
+        print(knots[-1], direction, knots[0])
+        visited[knots[-1]] = True
             
 
+print(visited)
 print(len(visited))
