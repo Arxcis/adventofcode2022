@@ -36,46 +36,21 @@ def move_tail(head, tail):
     else:
         """
             *HHH*                                     *HHH*
-            H***H                                     H*T*H
+            H***H                                     HTTTH
             H*T*H  <-- If Head moved 1 away then -->  HT#TH 
-            H***H                                     H*T*H 
+            H***H                                     HTTTH 
             *HHH*                                     *HHH*
         """
-        if direction == "R":
-            tail = (tail[0]+1, tail[1])
-        elif direction == "L":
-            tail = (tail[0]-1, tail[1])
-        elif direction == "U":
-            tail = (tail[0], tail[1]-1)
-        elif direction == "D":
-            tail = (tail[0], tail[1]+1)
+        if head[0] < tail[0]:
+            tail = (tail[0] - 1, tail[1])
+        elif head[0] > tail[0]:
+            tail = (tail[0] + 1, tail[1])
+       
+        if head[1] < tail[1]:
+            tail = (tail[0], tail[1] - 1)
+        elif head[1] > tail[1]:
+            tail = (tail[0], tail[1] + 1)
 
-        if head[0] != tail[0] and head[1] != tail[1]:
-            """
-                *H*H*                                            *H*H*
-                H*T*H                                            HT*TH
-                *T#T*  <-- If Head has moved diagonally then --> **#** 
-                H*T*H                                            HT*TH 
-                *H*H*                                            *H*H*
-            """
-            if direction == "R" or direction == "L":
-                """
-                    *****                 *****
-                    H***H                 HT*TH
-                    *T#T*  <-- If then -> **#** 
-                    H***H                 HT*TH 
-                    *****                 *****
-                """
-                tail = (tail[0], head[1])
-            else: # direction == "U" or direction == "D":
-                """
-                    *H*H*                 *H*H* 
-                    **T**                 *T*T*
-                    **#**  <-- If then -> **#** 
-                    **T**                 *T*T* 
-                    *H*H*                 *H*H* 
-                """ 
-                tail = (head[0], tail[1])
     return tail
 
 def move_head(head, direction):       
@@ -122,9 +97,7 @@ for (direction, steps) in moves:
         for i, tail in enumerate(knots[1:]):
             knots[i+1] = move_tail(knots[i], tail)
         
-        print(knots[-1], direction, knots[0])
         visited[knots[-1]] = True
-            
+        print(knots)            
 
-print(visited)
 print(len(visited))
