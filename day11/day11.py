@@ -63,7 +63,12 @@ def make_monkeys():
         if_false=int(if_false),
         inspect_count=0
     ) for id, starting, left, operand, right, divisible_by, if_true, if_false in re.findall(
-        "Monkey (\d+):\s+Starting items: ([\d,\s]+)\s+Operation: new = (old) (\*|\+) (old|\d+)\s+Test: divisible by (\d+)\s+If true: throw to monkey (\d+)\s+ If false: throw to monkey (\d+)", 
+        "Monkey (\d+):\s+"+
+            "Starting items: ([\d,\s]+)\s+"+
+            "Operation: new = (old) (\*|\+) (old|\d+)\s+"+
+            "Test: divisible by (\d+)\s+"+
+                "If true: throw to monkey (\d+)\s+"+
+                "If false: throw to monkey (\d+)", 
         filetext
     )]
 
