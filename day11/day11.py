@@ -1,7 +1,6 @@
 import fileinput, re
 from dataclasses import dataclass
 from functools import reduce
-from time import sleep
 
 @dataclass
 class Operation:
