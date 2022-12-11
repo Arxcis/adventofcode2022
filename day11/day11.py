@@ -112,15 +112,7 @@ print(reduce(lambda a, b: a*b, sorted[:2]))
 #
 monkeys = make_monkeys()
 
-def calculate_common_multiple(monkeys):
-    common_multiple = 1
-    for m in monkeys:
-        common_multiple *= m.divisible_by
-
-    return common_multiple
-
-
-common_multiple = calculate_common_multiple(monkeys)
+common_multiple = reduce(lambda a,b: a*b, [m.divisible_by for m in monkeys])
 
 for i in range(10000):
     for monkey in monkeys:
