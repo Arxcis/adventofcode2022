@@ -82,6 +82,7 @@ def calculate_worry_level(monkey, item):
         else:
             return item + int(monkey.operation.right)
 
+
 #
 # ----------- Part 1 ---------------
 #
@@ -111,29 +112,22 @@ print(reduce(lambda a, b: a*b, sorted[:2]))
 #
 monkeys = make_monkeys()
 
-for i in range(10):
-
-    print(f"i: {i}")
+def calculate_common_multiple(monkeys):
+    common_multiple = 1
     for m in monkeys:
-        print(m.items)
+        common_multiple *= m.divisible_by
 
+    return common_multiple
+
+
+common_multiple = calculate_common_multiple(monkeys)
+
+for i in range(10000):
     for monkey in monkeys:
         for item in monkey.items:
-            worry_level: int = 0
-
-#        def calculate_worry_level(monkey, item):
-            if monkey.operation.operand == "*":
-                if monkey.operation.right == "old":
-                    worry_level = item * item
-                else:
-                    worry_level = item * int(monkey.operation.right)
-
-            else: # monkey.operation.operand == "+"
-                if monkey.operation.right == "old":
-                    worry_level = item + item
-                else:
-                    worry_level = item + int(monkey.operation.right)
-
+            worry_level: int = calculate_worry_level(monkey, item)
+             
+            worry_level %= common_multiple
             
             if worry_level % monkey.divisible_by == 0:
                 monkeys[monkey.if_true].items.append(worry_level)
