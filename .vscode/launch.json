@@ -12,5 +12,16 @@
                 "day08/liten.input"
             ]
         },
+        {
+            "name": "Day 11",
+            "type": "python",
+            "request": "launch",
+            "program": "${file}",
+            "console": "integratedTerminal",
+            "args": [
+                "<",
+                "day11/liten.input"
+            ]
+        },
     ]
 }

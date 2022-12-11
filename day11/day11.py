@@ -14,7 +14,7 @@ class Monkey:
     id: int
     items: list[int]
     operation: Operation
-    divisble_by: int
+    divisible_by: int
     if_true: int
     if_false: int
     inspect_count: int
@@ -59,7 +59,7 @@ def make_monkeys():
         id=int(id),
         items=[int(part) for part in re.findall("\d+", starting)],
         operation=Operation(left=left,operand=operand,right=right),
-        divisble_by=int(divisible_by),
+        divisible_by=int(divisible_by),
         if_true=int(if_true),
         if_false=int(if_false),
         inspect_count=0
@@ -94,7 +94,7 @@ for i in range(20):
             
             worry_level //= 3
 
-            if worry_level % monkey.divisble_by == 0:
+            if worry_level % monkey.divisible_by == 0:
                 monkeys[monkey.if_true].items.append(worry_level)
             else:
                 monkeys[monkey.if_false].items.append(worry_level)
@@ -111,18 +111,31 @@ print(reduce(lambda a, b: a*b, sorted[:2]))
 #
 monkeys = make_monkeys()
 
-for i in range(50):
-    if i % 10 == 0:
-        print(f"i: {i}")
-        sleep(1)
-        for monkey in monkeys:
-            print(monkey.items)
+for i in range(10):
+
+    print(f"i: {i}")
+    for m in monkeys:
+        print(m.items)
 
     for monkey in monkeys:
         for item in monkey.items:
-            worry_level: int = calculate_worry_level(monkey, item)
+            worry_level: int = 0
+
+#        def calculate_worry_level(monkey, item):
+            if monkey.operation.operand == "*":
+                if monkey.operation.right == "old":
+                    worry_level = item * item
+                else:
+                    worry_level = item * int(monkey.operation.right)
+
+            else: # monkey.operation.operand == "+"
+                if monkey.operation.right == "old":
+                    worry_level = item + item
+                else:
+                    worry_level = item + int(monkey.operation.right)
+
             
-            if worry_level % monkey.divisble_by == 0:
+            if worry_level % monkey.divisible_by == 0:
                 monkeys[monkey.if_true].items.append(worry_level)
             else:
                 monkeys[monkey.if_false].items.append(worry_level)
