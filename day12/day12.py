@@ -19,20 +19,18 @@ for y, row in enumerate(_map):
 
 def find_steps_to_best_signal(start, hightmap):
     # Simulate dijkstra-ish algorithm
-    seen = []
-    horizon = [start]
+    seen = {}
+    horizon = {start: 1}
     hightmap[start[1]][start[0]] = "a"
     steps = 0
 
     while True:
         steps += 1
-        new_horizon = []
-        
+        new_horizon = {}        
         def check_candidate(cx,cy,x,y):
 
             if hightmap[y][x] == "z"\
             and hightmap[cy][cx] == "E":
-                seen.append((x,y))
                 return True # Found the top with the best signal !!
             
             if (cx,cy) in seen:
@@ -42,7 +40,7 @@ def find_steps_to_best_signal(start, hightmap):
                 return False
 
             if ord(hightmap[cy][cx]) - ord(hightmap[y][x]) <= 1:
-                new_horizon.append((cx,cy))
+                new_horizon[(cx,cy)] = 1
             
             return False
 
@@ -62,7 +60,7 @@ def find_steps_to_best_signal(start, hightmap):
             found = check_candidate(x,y+1,x,y)
             if found: break
 
-            seen.append((x,y))
+            seen[(x,y)] = 1
         
         if found: break
         
@@ -83,8 +81,6 @@ for y, row in enumerate(hightmap):
     if cell == "S":
         break
 
-print(f"Start: ({start[0]}, {start[1]})")
-
 steps = find_steps_to_best_signal(start, hightmap)
 print(steps)
 
@@ -97,18 +93,15 @@ for y, row in enumerate(hightmap):
         if cell == "a":
             start_positions.append((x,y))
 
-print(len(start_positions))
 
 results = []
 for start in start_positions:
     steps = find_steps_to_best_signal(start, hightmap)
     results.append(steps)
-    print(len(results))
     
 results = list(filter(lambda a: a != -1, results))
-print(results)
 
 results.sort()
-print(results)
+print(results[0])
 
 
