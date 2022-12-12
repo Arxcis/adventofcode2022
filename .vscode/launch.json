@@ -2,6 +2,28 @@
     "version": "0.2.0",
     "configurations": [
         {
+            "name": "Day 12 stor",
+            "type": "python",
+            "request": "launch",
+            "program": "${file}",
+            "console": "integratedTerminal",
+            "args": [
+                "<",
+                "day12/stor.input"
+            ]
+        },
+        {
+            "name": "Day 12",
+            "type": "python",
+            "request": "launch",
+            "program": "${file}",
+            "console": "integratedTerminal",
+            "args": [
+                "<",
+                "day12/liten.input"
+            ]
+        },
+        {
             "name": "Day 08",
             "type": "python",
             "request": "launch",
