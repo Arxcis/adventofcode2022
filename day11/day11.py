@@ -1,7 +1,6 @@
 import fileinput, re
 from dataclasses import dataclass
 from functools import reduce
-from time import sleep
 
 @dataclass
 class Operation:
@@ -64,7 +63,12 @@ def make_monkeys():
         if_false=int(if_false),
         inspect_count=0
     ) for id, starting, left, operand, right, divisible_by, if_true, if_false in re.findall(
-        "Monkey (\d+):\s+Starting items: ([\d,\s]+)\s+Operation: new = (old) (\*|\+) (old|\d+)\s+Test: divisible by (\d+)\s+If true: throw to monkey (\d+)\s+ If false: throw to monkey (\d+)", 
+        "Monkey (\d+):\s+"+
+            "Starting items: ([\d,\s]+)\s+"+
+            "Operation: new = (old) (\*|\+) (old|\d+)\s+"+
+            "Test: divisible by (\d+)\s+"+
+                "If true: throw to monkey (\d+)\s+"+
+                "If false: throw to monkey (\d+)", 
         filetext
     )]
 
@@ -81,6 +85,7 @@ def calculate_worry_level(monkey, item):
             return item + item
         else:
             return item + int(monkey.operation.right)
+
 
 #
 # ----------- Part 1 ---------------
@@ -111,29 +116,14 @@ print(reduce(lambda a, b: a*b, sorted[:2]))
 #
 monkeys = make_monkeys()
 
-for i in range(10):
+common_multiple = reduce(lambda a,b: a*b, [m.divisible_by for m in monkeys])
 
-    print(f"i: {i}")
-    for m in monkeys:
-        print(m.items)
-
+for i in range(10000):
     for monkey in monkeys:
         for item in monkey.items:
-            worry_level: int = 0
-
-#        def calculate_worry_level(monkey, item):
-            if monkey.operation.operand == "*":
-                if monkey.operation.right == "old":
-                    worry_level = item * item
-                else:
-                    worry_level = item * int(monkey.operation.right)
-
-            else: # monkey.operation.operand == "+"
-                if monkey.operation.right == "old":
-                    worry_level = item + item
-                else:
-                    worry_level = item + int(monkey.operation.right)
-
+            worry_level: int = calculate_worry_level(monkey, item)
+             
+            worry_level %= common_multiple
             
             if worry_level % monkey.divisible_by == 0:
                 monkeys[monkey.if_true].items.append(worry_level)
