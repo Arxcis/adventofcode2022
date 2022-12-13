@@ -35,12 +35,13 @@ RIGHT = 1
 def check_order(left, right):
     #1. If both are ints
     if isinstance(left, int) and isinstance(right, int):
-        if right < left:
-            return WRONG # Wrong order
+        if left < right:
+            return RIGHT    # Right order
         elif right == left:
             return NEUTRAL  # Identical, continue checking
         else:
-            return RIGHT  # Right order
+            print(f"WRONG!: left < right: {left} < {right}")
+            return WRONG    # Wrong order
  
     # 2. If mixed types, make both list
     if isinstance(left, int) and not isinstance(right, int):
@@ -51,21 +52,24 @@ def check_order(left, right):
     # 3. Both are lists
     for i in range(len(left)):
         if len(right) == i: # Right ran out of items, wrong order
+            print(f"WRONG!: len(right) == i: len({right}) == {i}: left {left}")
             return WRONG
         
         order = check_order(left[i], right[i])
         if order == WRONG or order == RIGHT:
             return order
 
-
-    return True
+    return NEUTRAL 
 
 
 
 pairs = []
 for i, (left, right) in enumerate(zip(lines[::2], lines[1::2])):
     order = check_order(left, right)
-    if order == RIGHT:
+    if order == RIGHT or order == NEUTRAL:
         pairs.append(i+1)
+    print(f"i: {i+1}, order: {order},\n\tleft: {left},\n\tright: {right}\n")
 
+print(pairs)
 print(sum(pairs))
+
