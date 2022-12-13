@@ -29,33 +29,34 @@ lines = [eval(line.strip()) for line in input() if line.strip() != ""]
 #
 # ---------- PART 1 ------------
 #
+WRONG = -1
+NEUTRAL = 0
+RIGHT = 1
 def check_order(left, right):
-    # 1. If mixed types, make both int 
-    if isinstance(left, int) and not isinstance(right, int):
-        while isinstance(right, list):
-            if len(right) == 0: return False
-            right = right[0]
-
-    if not isinstance(left, int) and isinstance(right, int):
-        while isinstance(left, list):
-            if len(left) == 0: return True
-            left = left[0]
-         
-    #2. If both are ints
+    #1. If both are ints
     if isinstance(left, int) and isinstance(right, int):
         if right < left:
-            return False
+            return WRONG # Wrong order
+        elif right == left:
+            return NEUTRAL  # Identical, continue checking
         else:
-            return True
+            return RIGHT  # Right order
+ 
+    # 2. If mixed types, make both list
+    if isinstance(left, int) and not isinstance(right, int):
+        left = [left] 
+    if not isinstance(left, int) and isinstance(right, int):
+        right = [right]
 
     # 3. Both are lists
-    if len(right) < len(left):
-        return False
-    
-    for l,r in zip(left, right):
-        ordered = check_order(l,r)
-        if not ordered:
-            return False
+    for i in range(len(left)):
+        if len(right) == i: # Right ran out of items, wrong order
+            return WRONG
+        
+        order = check_order(left[i], right[i])
+        if order == WRONG or order == RIGHT:
+            return order
+
 
     return True
 
@@ -63,8 +64,8 @@ def check_order(left, right):
 
 pairs = []
 for i, (left, right) in enumerate(zip(lines[::2], lines[1::2])):
-    ordered = check_order(left, right)
-    if ordered:
+    order = check_order(left, right)
+    if order == RIGHT:
         pairs.append(i+1)
 
 print(sum(pairs))
