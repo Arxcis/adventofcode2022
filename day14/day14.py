@@ -23,9 +23,6 @@ from functools import reduce
 rocks = [[(int(x),int(y)) for x,y in re.findall("(\d+),(\d+)", line)] for line in input()]
 flat_lines = reduce(lambda a,b: a+b, rocks)
 
-min_x = min(flat_lines, key=lambda it: it[0])[0]
-min_y = min(flat_lines, key=lambda it: it[1])[1]
-
 max_x = max(flat_lines, key=lambda it: it[0])[0] + 10 
 max_y = max(flat_lines, key=lambda it: it[1])[1] + 10
 
@@ -67,7 +64,6 @@ for rock_line in rocks:
 # -------------- PART 1 -------------
 #
 i = 0
-sand_set = set()
 
 # Simulate sand
 while True:
@@ -92,7 +88,6 @@ while True:
         # else sand is at rest :)
         else:
             i += 1
-            sand_set.add((x,y))
             grid[y][x] = SAND
             break
     
@@ -103,5 +98,16 @@ while True:
 print(f"\n=== GAME OVER! === ")
 print_grid()
 print(i)
-print(len(sand_set))
+
+sand_count = 0
+dust_count = 0
+rock_count = 0
+for row in grid:
+    for cell in row:
+        if cell == SAND: sand_count += 1
+        if cell == DUST: dust_count += 1
+        if cell == ROCK: rock_count += 1
+
+print(sand_count,dust_count,rock_count)
+
 
