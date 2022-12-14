@@ -26,8 +26,8 @@ flat_lines = reduce(lambda a,b: a+b, rocks)
 min_x = min(flat_lines, key=lambda it: it[0])[0]
 min_y = min(flat_lines, key=lambda it: it[1])[1]
 
-max_x = max(flat_lines, key=lambda it: it[0])[0] + 1
-max_y = max(flat_lines, key=lambda it: it[1])[1] + 1
+max_x = max(flat_lines, key=lambda it: it[0])[0] + 10 
+max_y = max(flat_lines, key=lambda it: it[1])[1] + 10
 
 START = "+"
 AIR = "."
@@ -66,35 +66,42 @@ for rock_line in rocks:
 #
 # -------------- PART 1 -------------
 #
-i = 0 
+i = 0
+sand_set = set()
+
+# Simulate sand
 while True:
     x,y = sand_start 
     
+    # Simulate grain
     while True:
-        # If one below is air, lower sand
+        # If below is air, sand falls 
         if grid[y+1][x] == AIR or grid[y+1][x] == DUST:
             y += 1
-        # If one below is rock or sand
+            grid[y][x] = DUST
+        # else check down+left
+        elif grid[y+1][x-1] == AIR or grid[y+1][x-1] == DUST: 
+            y += 1
+            x -= 1
+            grid[y][x] = DUST
+        # else check down+right
+        elif grid[y+1][x+1] == AIR or grid[y+1][x+1] == DUST: 
+            y += 1
+            x += 1
+            grid[y][x] = DUST
+        # else sand is at rest :)
         else:
-            # Check left
-            if grid[y+1][x-1] == AIR or grid[y+1][x-1] == DUST: 
-                y += 1
-                x -= 1
-            # check right
-            elif grid[y+1][x+1] == AIR or grid[y+1][x+1] == DUST: 
-                y += 1
-                x += 1
-            else:
-                break
-        
-        grid[y][x] = DUST
+            i += 1
+            sand_set.add((x,y))
+            grid[y][x] = SAND
+            break
+    
+        # If sand is falling into the abyss...
         if y == len(grid)-1: break
     if y == len(grid)-1: break
     
-    i += 1
-    grid[y][x] = SAND
-
 print(f"\n=== GAME OVER! === ")
-
-print(i) 
+print_grid()
+print(i)
+print(len(sand_set))
 
