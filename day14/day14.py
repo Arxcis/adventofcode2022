@@ -68,7 +68,6 @@ for rock_line in rocks:
 #
 i = 0 
 while True:
-    i += 1
     x,y = sand_start 
     
     while True:
@@ -91,13 +90,11 @@ while True:
         grid[y][x] = DUST
         if y == len(grid)-1: break
     if y == len(grid)-1: break
-
-    grid[y][x] = SAND
     
-    print(f"\n=== {i} === ")
-    print_grid()
+    i += 1
+    grid[y][x] = SAND
 
 print(f"\n=== GAME OVER! === ")
-print_grid()
 
-print((min_x,min_y), (max_x,max_y))
+print(i) 
+
