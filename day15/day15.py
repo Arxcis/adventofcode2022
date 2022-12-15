@@ -43,14 +43,14 @@ def find_impossible_positions(y: int, beacons_on_y: set, impossible_positions_on
         """
         ....B##############....
         ...#################...
-        ..#########S#########.. <- max_y ->
+        ..#########S#########.. [<- max_y ->]
         ...#################...
         ....###############....
         """
         max_y = (sb_distance * 2) + 1
 
         """
-        ....B##############.... <- y_coverage ->
+        ....B##############.... [<- y_coverage ->]
         ...#################...
         ..#########S#########.. 
         ...#################...
@@ -62,7 +62,7 @@ def find_impossible_positions(y: int, beacons_on_y: set, impossible_positions_on
             for i in range(1, (y_coverage // 2)+1):
                 impossible_positions_on_y.add((sx+i,y))
                 impossible_positions_on_y.add((sx-i,y))
-        
+
         if by == y:
             beacons_on_y.add((bx,by))
 
@@ -70,32 +70,45 @@ def find_impossible_positions(y: int, beacons_on_y: set, impossible_positions_on
 #
 # ------ Part 1 -------
 #
+small_input_y = 10
+big_input_y = 2_000_000
+
 print("# ------ Part 1 -------")
 impossible_positions_on_y = set()
 beacons_on_y = set()
-find_impossible_positions(10, beacons_on_y, impossible_positions_on_y)
+find_impossible_positions(big_input_y, beacons_on_y, impossible_positions_on_y)
+
+print(f"len(impossible_positions_on_y): {len(impossible_positions_on_y)}")
+print(f"len(beacons_on_y): {len(beacons_on_y)}")
 print(len(impossible_positions_on_y) - len(beacons_on_y))
 
 #
 # ------ Part 2 -------
 #
+small_input_range = range(10,21)
+big_input_range = range(0, 4_000_000)
+
 print("# ------ Part 2 -------")
 impossible_positions_on_y = set()
 beacons_on_y = set()
-for y in range(10,21):
-    print(y)
+for y in small_input_range:
     find_impossible_positions(y, beacons_on_y, impossible_positions_on_y)
 print(len(impossible_positions_on_y) - len(beacons_on_y))
 
-from functools import cmp_to_key
 
+print("Converting set() to list[]...")
 positions = [it for it in impossible_positions_on_y]
+
 def cmp(a,b):
     if b[1] == a[1]: 
         return a[0] - b[0]
     return a[1] - b[1]
 
+print("Sorting_positions....")
+from functools import cmp_to_key
 positions.sort(key=cmp_to_key(cmp))
+
+print("Looking for distress beacon....")
 for a,b in zip(positions[0:-1], positions[1:]):
     diff_x = abs(b[0] - a[0])
     diff_y = abs(b[1] - a[1])
