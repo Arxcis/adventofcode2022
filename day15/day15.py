@@ -16,116 +16,99 @@ Sensor at x=16, y=7: closest beacon is at x=15, y=3
 Sensor at x=14, y=3: closest beacon is at x=15, y=3
 Sensor at x=20, y=1: closest beacon is at x=15, y=3
 """
-sensors = [[(int(sx),int(sy),int(bx),int(by)) for sx,sy,bx,by in findall(
+sensors = [[(int(sx),int(sy),int(bx),int(by), abs(int(bx)-int(sx)) + abs(int(by)-int(sy))) for sx,sy,bx,by in findall(
     "Sensor at x=(-?\d+), y=(-?\d+): closest beacon is at x=(-?\d+), y=(-?\d+)", line
 )][0] for line in input()]
 
-def find_impossible_positions(y: int, beacons_on_y: set, impossible_positions_on_y: set):
-    for sensor in sensors:
-        sx,sy,bx,by = sensor
-        """
-        ....B<-----|#######.... sb_distance
-        ...########|########...
-        ..#########S#########.. 
-        ...#################...
-        ....###############....
-        """
-        sb_distance = abs(bx-sx) + abs(by-sy)
-        """
-        ....B######^########.... sy_distance
-        ...########|########...
-        ..#########S#########.. 
-        ...#################...
-        ....###############....
-        """
-        sy_distance = abs(y-sy)
+sensor_range_min = min([sx - abs(bx-sx) - abs(by-sy) for (sx,sy,bx,by,_) in sensors])
+sensor_range_max = max([sx + abs(bx-sx) + abs(by-sy) for (sx,sy,bx,by,_) in sensors])
+def find_intersections(y, sensors):
+    intersecting_sensors = []
+    intersecting_beacons = set()
 
-        """
-        ....B##############....
-        ...#################...
-        ..#########S#########.. [<- max_y ->]
-        ...#################...
-        ....###############....
-        """
-        max_y = (sb_distance * 2) + 1
+    for sx,sy,bx,by,sb_distance in sensors:
+        sy_distance = abs(y - sy)
 
-        """
-        ....B##############.... [<- y_coverage ->]
-        ...#################...
-        ..#########S#########.. 
-        ...#################...
-        ....###############....
-        """
-        y_coverage = max_y - (sy_distance*2)
-        if y_coverage > 0:
-            impossible_positions_on_y.add((sx,y))
-            for i in range(1, (y_coverage // 2)+1):
-                impossible_positions_on_y.add((sx+i,y))
-                impossible_positions_on_y.add((sx-i,y))
+        # If y does not intersect with sensor area
+        #   y -------------------  = 10
+        #   ...................... = 11
+        #   ...........#.......... = 12
+        #   ..........B##......... = 13
+        #   .........##S##........ = 14
+        if sy_distance > sb_distance:
+            continue
 
+        # If y intersects with sensor area
+        #   ...................... = 07
+        #   ...................... = 08
+        #   ...........#.......... = 09
+        #   y ------- B## -------  = 10
+        #   .........##S##........ = 11
+        #   ..........###......... = 12
+        #   ...........#.......... = 13
+
+        # If Beacon intersects with y
         if by == y:
-            beacons_on_y.add((bx,by))
+            intersecting_beacons.add((bx,by))
+
+        #   ...................... = 07
+        #   ...........#.......... = 08
+        #   y --------B##--------  = 09
+        #   .........#####........ = 10
+        #   sx_min  X##S##X sx_max = 11
+        #   .........#####........ = 12
+        #   ..........###......... = 13
+        #   ...........#.......... = 14
+        #   ...................... = 15
+        sx_min = sx - sb_distance
+        sx_max = sx + sb_distance + 1
+
+        #   ...................... = 07
+        #   ...........#.......... = 08
+        #    yx_min   X#X  yx_max  = 09
+        #   .........#####........ = 10
+        #    sx_min X##S##X sx_max = 11
+        #   .........#####........ = 12
+        #   ..........###......... = 13
+        #   ...........#.......... = 14
+        #   ...................... = 15
+        yx_min = sx_min + sy_distance
+        yx_max = sx_max - sy_distance
+
+        intersecting_sensors.append((yx_min, yx_max))
+
+    return (intersecting_sensors, intersecting_beacons)
 
 
 #
-# ------ Part 1 -------
+# ---- Part 1 ----
 #
-small_input_y = 10
-big_input_y = 2_000_000
+intersecting_lines, intersecting_beacons = find_intersections(10, sensors)
+start = min(intersecting_lines, key=lambda line: line[0])[0]
+end = max(intersecting_lines, key=lambda line: line[1])[1]
+print("Part 1: ", end - start - len(intersecting_beacons))
 
-print("# ------ Part 1 -------")
-impossible_positions_on_y = set()
-beacons_on_y = set()
-find_impossible_positions(big_input_y, beacons_on_y, impossible_positions_on_y)
-
-print(f"len(impossible_positions_on_y): {len(impossible_positions_on_y)}")
-print(f"len(beacons_on_y): {len(beacons_on_y)}")
-print(len(impossible_positions_on_y) - len(beacons_on_y))
 
 #
-# ------ Part 2 -------
+# ---- Part 2 ----
 #
-small_input_range = range(10,21)
-big_input_range = range(0, 4_000_000)
+for y in range(0, 4_000_000):
+    intersecting_lines, intersecting_beacons = find_intersections(y, sensors)
+    intersecting_lines.sort()
 
-print("# ------ Part 2 -------")
-impossible_positions_on_y = set()
-beacons_on_y = set()
-for y in small_input_range:
-    find_impossible_positions(y, beacons_on_y, impossible_positions_on_y)
-print(len(impossible_positions_on_y) - len(beacons_on_y))
+    for i in range(0,len(intersecting_lines)-1):
+        # Check if there is a gap
+        a_start,a_end = intersecting_lines[i]
+        b_start,b_end = intersecting_lines[i+1]
 
+        if a_end > b_end:
+            intersecting_lines[i+1] = (b_start, a_end)
+            continue
 
-print("Converting set() to list[]...")
-positions = [it for it in impossible_positions_on_y]
-
-def cmp(a,b):
-    if b[1] == a[1]: 
-        return a[0] - b[0]
-    return a[1] - b[1]
-
-print("Sorting_positions....")
-from functools import cmp_to_key
-positions.sort(key=cmp_to_key(cmp))
-
-print("Looking for distress beacon....")
-for a,b in zip(positions[0:-1], positions[1:]):
-    diff_x = abs(b[0] - a[0])
-    diff_y = abs(b[1] - a[1])
-    if diff_x > 1 and diff_y == 0:
-        print(f"Found distress beacon at: {(a[0]+1, a[1])} !!!")
-        exit()
-""" 
-grid = [["." for x in range(21)] for y in range(10,21)]
-for x,y in impossible_positions_on_y:
-    if x > 20 or x < 0 or y > 20 or y < 10: continue
-    grid[y-10][x] = "#"
-
-for y,row in enumerate(grid):
-    str = f"y: {y+10} - {''.join(row)}"
-    for x,cell in enumerate(row):
-        if cell == ".":
-            str += f" <- FOUND distress beacon at: {(x,y+10)} !!"
-            
-    print(str)
- """
+        if b_start > a_end:
+            # FOUND GAP!
+            x = a_end
+            y = y
+            # 11_756_174_628_223
+            print(f"a_end: {a_end}, b_start: {b_start}, x: {x}, y: {y}, tuning frequency: {x * 4_000_000 + y}")
+            exit(0)
