@@ -17,8 +17,9 @@ Sensor at x=14, y=3: closest beacon is at x=15, y=3
 Sensor at x=20, y=1: closest beacon is at x=15, y=3
 """
 sensors = [[(int(sx),int(sy),int(bx),int(by), abs(int(bx)-int(sx)) + abs(int(by)-int(sy))) for sx,sy,bx,by in findall(
-    "Sensor at x=(-?\d+), y=(-?\d+): closest beacon is at x=(-?\d+), y=(-?\d+)", line
-)][0] for line in input()]
+        "Sensor at x=(-?\d+), y=(-?\d+): closest beacon is at x=(-?\d+), y=(-?\d+)",
+        line
+    )][0] for line in input()]
 
 sensor_range_min = min([sx - abs(bx-sx) - abs(by-sy) for (sx,sy,bx,by,_) in sensors])
 sensor_range_max = max([sx + abs(bx-sx) + abs(by-sy) for (sx,sy,bx,by,_) in sensors])
